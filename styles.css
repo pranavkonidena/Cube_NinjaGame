@@ -1,0 +1,55 @@
+.game-canvas{
+    overflow: hidden;
+    height: 100%;
+}
+
+
+.cube{
+    width: 5rem;
+    height: 5rem;
+    position: absolute;
+    top : 60rem;
+    background-color: rebeccapurple;
+    animation: bring_into_view 3s , rotate 8s;
+}
+
+.game-area{
+    overflow: hidden;
+    height: 100%;
+}
+
+:root {
+    --my-start-left: 0;
+    --my-middle-left : 120px;
+    --my-end-left: 280px;
+}
+
+@keyframes bring_into_view{
+    0%{
+        top : 60rem;
+        left: var(--my-start-left);
+    }
+    50%{
+        top : 5rem;
+        left : var(--my-middle-left)
+    }
+    100%{
+        top: 60rem;
+        left: var(--my-end-left);
+    }
+}
+
+@keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(359deg);
+    }
+  }
+
+.score{
+    display: inline-block;
+    position: absolute;
+    right: 0;
+}
