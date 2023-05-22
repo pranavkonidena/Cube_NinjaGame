@@ -16,6 +16,7 @@ function start_game() {
     let game_area = document.getElementsByClassName("game-canvas")[0];
     hide_stuff.setAttribute("hidden" , "hidden");
     game_area.removeAttribute("hidden");
+    generateCubes();
    
 }
 
@@ -32,55 +33,79 @@ function end_game() {
 
 function createCube() {
     let x = document.createElement("div");
+    let game_area = document.getElementsByClassName("game-canvas")[0];
+    x.className = "cube";
+   
     let position_left = Math.random() * 1000;
     x.style.setProperty("--my-start-left" , (position_left + "px"));
     x.style.setProperty("--my-middle-left" , (position_left + 200 + "px"));
     x.style.setProperty("--my-end-left" , (position_left + 400 + "px"));
-    let game_area = document.getElementsByClassName("game-canvas")[0];
+    
     game_area.appendChild(x);
-    x.className = "cube";
-
 }
 
+
+let cube = document.getElementsByClassName("cube");
+function generateCubes(){
+    // setInterval(() => {
+    //     let animated = 0;
+    //     createCube();
+    //     // setTimeout(() => { // THis whole code block generates one cube which works
+    //     //     destroyCube();
+    //     // } , 3000);
+    //     let rect = cube[0].getBoundingClientRect();
+    //     if(rect.top < 960){
+    //         animated = 1;
+    //     }
+    //     else{
+    //         animated = 0;
+    //     }
+    //     // if(rect.top == 300){
+    //     //     destroyCube();
+    //     // }
+        
+        
+    // }, 1000);
+    for(let i = 0; i < 3; i ++){
+        createCube();
+        cube[i].addEventListener("animationend" , () => {
+            destroyCube();
+    })
+    }
+    
+}
 
 
 getComputedStyle(document.documentElement)
     .getPropertyValue('--my-start-left'); // returns val
 
 
-setInterval(() => {
-   for(let i = 0; i < 1; i ++){
-    createCube();
-   }
-} , 1500)
 
-
-clearInterval(createCube());
 
 let game_area = document.getElementsByClassName("game-area")[0];
 let x_initial;
 let y_initial;
 let x_final;
 let y_final;
-game_area.addEventListener("mousedown" , (e) => {
-    console.log(e);
-    x_initial = e.screenX;
-    y_initial = e.screenY;
-    console.log(x_initial);
-})
+// game_area.addEventListener("mousedown" , (e) => {
+//     console.log(e);
+//     x_initial = e.screenX;
+//     y_initial = e.screenY;
+//     console.log(x_initial);
+// })
 
-game_area.addEventListener("mouseup" , (e) => {
-    console.log("Final" + e);
-    x_final = e.screenX;
-    y_final = e.screenY;
-})
-
-
+// game_area.addEventListener("mouseup" , (e) => {
+//     console.log("Final" + e);
+//     x_final = e.screenX;
+//     y_final = e.screenY;
+// })
 
 
 
 
-let cube = document.getElementsByClassName("cube");
+
+
+
 
 for(let i = 0; i < cube.length; i ++){
     cube.ondragstart = function () {
@@ -129,5 +154,12 @@ var intervalLoop = null;
 init();
 
 // Use the e.screenX and e.screenY to automatically trigger the mouseup event (i.e fire that corresponding fn.. otherwise leads to bugs)
+
+function destroyCube() {
+    let x  = document.getElementsByClassName("cube");
+    for(let i = 0; i< x.length; i ++){
+        x[i].remove();
+    }
+}
 
 

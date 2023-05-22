@@ -10,7 +10,7 @@
     position: absolute;
     top : 60rem;
     background-color: rebeccapurple;
-    animation: bring_into_view 3s , rotate 8s;
+    animation: bring_into_view 3s, rotate 8s;
 }
 
 .game-area{
@@ -34,8 +34,8 @@
         left : var(--my-middle-left)
     }
     100%{
-        top: 60rem;
         left: var(--my-end-left);
+        top: 60rem;
     }
 }
 
