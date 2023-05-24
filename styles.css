@@ -4,11 +4,12 @@
 }
 
 
-.cube{
+[class^="cube-"]{
     width: 5rem;
     height: 5rem;
     position: absolute;
     top : 60rem;
+    border-radius: 100%;
     background-color: rebeccapurple;
     animation: bring_into_view 3s, rotate 8s;
 }
@@ -52,4 +53,12 @@
     display: inline-block;
     position: absolute;
     right: 0;
+}
+
+.dead{
+    display: none;
+}
+
+.cut{
+    display: none;
 }

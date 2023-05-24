@@ -16,7 +16,25 @@ function start_game() {
     let game_area = document.getElementsByClassName("game-canvas")[0];
     hide_stuff.setAttribute("hidden" , "hidden");
     game_area.removeAttribute("hidden");
-    generateCubes();
+   
+        generateCubes();
+        setInterval(() => {
+            // for(let i = 0; i < cube.length; i ++){
+            //     cube[i].addEventListener("mouseover" , () => {
+            //         cube[i].setAttribute("hidden" , "hidden");
+            //     })
+            // }
+            init();
+        } , 2000);
+    
+   
+ 
+    // This works but as a mouse over event!
+    // Logic is that if the line's perpendicular distance frm the centrer is < a/rt2, its a cut.
+   
+   
+  
+
    
 }
 
@@ -25,16 +43,18 @@ function end_game() {
     let game_area = document.getElementsByClassName("game-canvas")[0];
     hide_stuff.removeAttribute("hidden");
     game_area.setAttribute("hidden" , "hidden");
+    location.reload();
 }
 
-
+var count = 0;
 
 
 
 function createCube() {
+    count++;
     let x = document.createElement("div");
     let game_area = document.getElementsByClassName("game-canvas")[0];
-    x.className = "cube";
+    x.className = `cube-${count} cube`;
    
     let position_left = Math.random() * 1000;
     x.style.setProperty("--my-start-left" , (position_left + "px"));
@@ -46,33 +66,14 @@ function createCube() {
 
 
 let cube = document.getElementsByClassName("cube");
+
 function generateCubes(){
-    // setInterval(() => {
-    //     let animated = 0;
-    //     createCube();
-    //     // setTimeout(() => { // THis whole code block generates one cube which works
-    //     //     destroyCube();
-    //     // } , 3000);
-    //     let rect = cube[0].getBoundingClientRect();
-    //     if(rect.top < 960){
-    //         animated = 1;
-    //     }
-    //     else{
-    //         animated = 0;
-    //     }
-    //     // if(rect.top == 300){
-    //     //     destroyCube();
-    //     // }
-        
-        
-    // }, 1000);
-    for(let i = 0; i < 3; i ++){
-        createCube();
-        cube[i].addEventListener("animationend" , () => {
-            destroyCube();
-    })
-    }
     
+       
+        setInterval(() => {
+            createCube();
+            // gameEndCheck();
+        } , 1000);
 }
 
 
@@ -101,7 +102,12 @@ let y_final;
 // })
 
 
-
+var cursorX;
+var cursorY;
+var canvas = document.getElementById("canvas"); //canvas, context, other vars etc
+var ctx = canvas.getContext("2d");
+var firstClick = [0,0];
+var intervalLoop = null;
 
 
 
@@ -113,7 +119,15 @@ for(let i = 0; i < cube.length; i ++){
     }
 }
 
-
+function init() {
+    document.onmousemove = function(e){
+        cursorX = e.pageX;
+        cursorY = e.pageY;
+    };
+    canvas.addEventListener('mousedown', startDragLine, false);
+    canvas.addEventListener('mouseup', stopDragLine, false);
+    // destroyCube();
+}
 
 let num = Math.random() * 4;
 
@@ -131,35 +145,82 @@ function startDragLine(e) {
     let audio = new Audio("./assets/sword.mp3");
     audio.play();
 }
+var count1 = 0;
 function stopDragLine(){
+    count1++;
     clearInterval(intervalLoop);
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // console.log(`X intiail is : ${firstClick[0]} and the final x is ${cursorX}`);
+    // This is problematic smwhere
+    for(let i = count1; i <= cube.length; i ++){
+        
+        //(y1-x1)*slope = intercept
+       
+        let x1 = firstClick[0];
+        let x2 = cursorX;
+        let y1 = firstClick[1];
+        let y2 = cursorY;
+        var m = (y2 - y1)/(x2 - x1);
+        var c = (y1 - x1)*m;
+        let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
+        let rect = indi_cube.getBoundingClientRect();
+
+        console.log(rect.top);
+        var cx = rect.left + 32;
+        var cy = rect.top + 32;
+        var r = 80;
+        // let y = m*x + c;
+        //mx0-y0+c/rt(m^2+1)
+        function lineCheck(x,y,r){
+            let distance = (m*x-y+c)/Math.sqrt(m*m + 1);
+            console.log(distance);
+            if(distance < r){
+                console.log("True");
+                indi_cube.classList.add("cut");
+            }
+            else{
+                console.log("False");
+            }
+        }
+        lineCheck(cx,cy,r);
 }
 
-function init() {
-    document.onmousemove = function(e){
-        cursorX = e.pageX;
-        cursorY = e.pageY;
-    };
-    canvas.addEventListener('mousedown', startDragLine, false);
-    canvas.addEventListener('mouseup', stopDragLine, false);
-}
 
-var cursorX;
-var cursorY;
-var canvas = document.getElementById("canvas"); //canvas, context, other vars etc
-var ctx = canvas.getContext("2d");
-var firstClick = [0,0];
-var intervalLoop = null;
-init();
+
+
+
+
+
+
+
 
 // Use the e.screenX and e.screenY to automatically trigger the mouseup event (i.e fire that corresponding fn.. otherwise leads to bugs)
 
-function destroyCube() {
-    let x  = document.getElementsByClassName("cube");
-    for(let i = 0; i< x.length; i ++){
-        x[i].remove();
+function destroyCube(){
+    for(let i = 1; i < cube.length; i ++){
+       let x = document.getElementsByClassName(`cube-${i}`);
+       try {
+        console.log(x);
+        x[0].addEventListener("animationend" , () => {
+         x[0].classList.add = "dead";
+        })
+       } catch (error) {
+        console.log("That cube was dead");
+       }
+       
     }
 }
-
+let game_end = 0;
+function gameEndCheck() {
+    for(let i = 0; i < cube.length; i ++){
+        if(!cube[i].classList.contains("cut")){
+            game_end = 1;
+            console.log(game_end);
+        }
+    }
+    
+}
+}
 
