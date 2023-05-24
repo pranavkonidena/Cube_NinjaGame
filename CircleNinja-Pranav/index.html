@@ -4,22 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Circle Ninja</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class = "bgs">
-        <button class = "start-game">Start the Game</p>
-        <button class = "how-to-play">How to play</p>
+        <h1 class = "head">CircleNinja</h1>
+        <center><button class = "start-game">Start the Game</p></center>
     </div>
     <div class = "game-canvas" hidden = "hidden">
         <button class = "end-game">End Game</button>
-        <p class = "score">Score : </p>
+       <center><p class = "score">Score : </p></center>
         
         <canvas id="canvas" width="2000" height="500"></canvas>
     </div>
     <div class = "game-end" hidden = "hidden">
         <p>GameFinished</p>
+        <p class = "final-score">Your score was: </p>
     </div>
     <script src="script.js"></script>
 </body>

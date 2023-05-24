@@ -9,14 +9,14 @@ end_button.addEventListener("click" , () => {
     end_game();
 })
 
-
+var score = 0;
 
 function start_game() {
     let hide_stuff = document.getElementsByClassName("bgs")[0];
     let game_area = document.getElementsByClassName("game-canvas")[0];
     hide_stuff.setAttribute("hidden" , "hidden");
     game_area.removeAttribute("hidden");
-   
+    document.body.style.backgroundColor = "white";
         generateCubes();
         setInterval(() => {
             // for(let i = 0; i < cube.length; i ++){
@@ -202,9 +202,15 @@ function stopDragLine(){
             console.log(`Radius is ${r}`);
             if(Math.abs(distance) < 1.5*r){
                 indi_cube.classList.add("cut");
+                score++;
+                let y = document.getElementsByClassName("final-score")[0];
+                y.innerHTML = `Your score was ${score}`;
+                let x = document.getElementsByClassName("score")[0];
+                x.innerHTML = `Score : ${score}`;
             }
         }
         lineCheck(cx,cy,r);
+        
        
 }
 
@@ -238,3 +244,7 @@ function destroyCube(){
        
     }
 }
+
+
+
+document.body.style.backgroundColor = "#FFF8D6";
