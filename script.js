@@ -25,9 +25,15 @@ function start_game() {
             //     })
             // }
             init();
+            setTimeout(() => {
+                gameEndCheck();
+            } , 3000);
+            
+            
         } , 2000);
+
     
-   
+        
  
     // This works but as a mouse over event!
     // Logic is that if the line's perpendicular distance frm the centrer is < a/rt2, its a cut.
@@ -131,6 +137,23 @@ function init() {
 
 let num = Math.random() * 4;
 
+function gameEndCheck() {
+    for(let i = 1; i < count1; i ++){
+        if(!cube[i].classList.contains("cut")){
+            game_end = 1;
+            // alert("Game finished");
+            let gameEnd = document.getElementsByClassName("game-end")[0];
+            gameEnd.removeAttribute("hidden");
+            let gameArea = document.getElementsByClassName("game-canvas")[0];
+            gameArea.setAttribute("hidden" , "hidden");
+
+            
+        }
+    }
+    
+}
+
+
 function startDragLine(e) {
     firstClick = [e.pageX, e.pageY];
     //start the loop
@@ -175,16 +198,14 @@ function stopDragLine(){
         //mx0-y0+c/rt(m^2+1)
         function lineCheck(x,y,r){
             let distance = (m*x-y+c)/Math.sqrt(m*m + 1);
-            console.log(distance);
-            if(distance < r){
-                console.log("True");
+            console.log(`Distance is : ${distance}`);
+            console.log(`Radius is ${r}`);
+            if(Math.abs(distance) < 1.5*r){
                 indi_cube.classList.add("cut");
-            }
-            else{
-                console.log("False");
             }
         }
         lineCheck(cx,cy,r);
+       
 }
 
 
@@ -197,6 +218,11 @@ function stopDragLine(){
 
 
 // Use the e.screenX and e.screenY to automatically trigger the mouseup event (i.e fire that corresponding fn.. otherwise leads to bugs)
+
+
+
+
+}
 
 function destroyCube(){
     for(let i = 1; i < cube.length; i ++){
@@ -212,15 +238,3 @@ function destroyCube(){
        
     }
 }
-let game_end = 0;
-function gameEndCheck() {
-    for(let i = 0; i < cube.length; i ++){
-        if(!cube[i].classList.contains("cut")){
-            game_end = 1;
-            console.log(game_end);
-        }
-    }
-    
-}
-}
-
