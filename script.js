@@ -154,7 +154,7 @@ function stopDragLine(){
     
     // console.log(`X intiail is : ${firstClick[0]} and the final x is ${cursorX}`);
     // This is problematic smwhere
-    for(let i = count1; i <= cube.length; i ++){
+    for(let i = count1; i < count1 + 1; i ++){
         
         //(y1-x1)*slope = intercept
        
