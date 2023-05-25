@@ -124,12 +124,24 @@ for(let i = 0; i < cube.length; i ++){
         return false;
     }
 }
+setInterval(() => {
+    cursorGet();
+} , 2000);
+
 
 function init() {
     document.onmousemove = function(e){
         cursorX = e.pageX;
         cursorY = e.pageY;
     };
+    console.log("X is " + cursorX);
+    console.log("Y is : " + cursorY);
+    // if(cursorY < 60){
+    //     stopDragLine();
+    // }
+    // else if(cursorX > 800){
+    //     stopDragLine();
+    // }
     canvas.addEventListener('mousedown', startDragLine, false);
     canvas.addEventListener('mouseup', stopDragLine, false);
     // destroyCube();
@@ -146,7 +158,7 @@ function gameEndCheck() {
             gameEnd.removeAttribute("hidden");
             let gameArea = document.getElementsByClassName("game-canvas")[0];
             gameArea.setAttribute("hidden" , "hidden");
-
+            timerEndGame();
             
         }
     }
@@ -200,7 +212,7 @@ function stopDragLine(){
             let distance = (m*x-y+c)/Math.sqrt(m*m + 1);
             console.log(`Distance is : ${distance}`);
             console.log(`Radius is ${r}`);
-            if(Math.abs(distance) < 1.5*r){
+            if(Math.abs(distance) < 1.2*r){
                 indi_cube.classList.add("cut");
                 score++;
                 let y = document.getElementsByClassName("final-score")[0];
@@ -244,7 +256,32 @@ function destroyCube(){
        
     }
 }
+var time = 10;
+function timerEndGame(){
+    let x = document.getElementsByClassName("redirect-text")[0];
+    const time_inti = setInterval(() => {
+        time--;
+        x.innerHTML = `Youll be redirected to the home screen after ${time} secs`;
+    }, 1000);
+    if(time <= 0){
+        clearInterval(time_inti);
+        location.reload();
+    }
+}
 
-
+var count_instructions = 0;
 
 document.body.style.backgroundColor = "#FFF8D6";
+
+let instrutions = document.getElementsByClassName("button_i")[0];
+instrutions.addEventListener("click" , () => {
+    count_instructions++;
+    let x = document.getElementsByClassName("instructions")[0];
+    if(count_instructions % 2 != 0){
+        x.removeAttribute("hidden");
+    }
+    else{
+        x.setAttribute("hidden" , "hidden");
+    }
+})
+
