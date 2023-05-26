@@ -120,3 +120,14 @@
     top: 0;
     left: auto;
 }
+
+#canvas{
+    overflow: hidden;
+    z-index: 1;
+}
+
+.no-select {
+    user-select: none;
+    -moz-user-select: none; 
+    -webkit-user-select: none; 
+    -ms-user-select: none; }

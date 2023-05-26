@@ -1,6 +1,9 @@
 let start_button = document.getElementsByClassName("start-game")[0];
 let how_to_button = document.getElementsByClassName("how-to-play")[0];
 let end_button = document.getElementsByClassName("end-game")[0];
+end_button.ondragstart = function (){
+    return false;
+}
 start_button.addEventListener("click" , () => {
     start_game();
 });
@@ -42,6 +45,8 @@ function start_game() {
    
 }
 
+
+
 // var time = 10;
 
 // function timerEndGame(){
@@ -70,6 +75,7 @@ var count = 0;
 
 function createCube() {
     count++;
+    // console.log("Count is: " + count);
     let x = document.createElement("div");
     let game_area = document.getElementsByClassName("game-canvas")[0];
     x.className = `cube-${count} cube`;
@@ -82,16 +88,30 @@ function createCube() {
     game_area.appendChild(x);
 }
 
-
+// function cubeHider(){
+//     for(let i = 1; i < count; i ++){
+//         let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
+//         console.log(indi_cube.offsetTop);
+//         if(indi_cube.offsetTop >= 550){
+//             indi_cube.style.display = "none";
+//         }
+//         else{
+//             indi_cube.style.display = "block";
+//         }
+//     }
+// }
 let cube = document.getElementsByClassName("cube");
 
 function generateCubes(){
     
-       
+    
         setInterval(() => {
             createCube();
+            destroyCube();
+            // cubeHider();
             // gameEndCheck();
         } , 1000);
+        
 }
 
 
@@ -144,8 +164,8 @@ function init() {
         cursorX = e.pageX;
         cursorY = e.pageY;
     };
-    console.log("X is " + cursorX);
-    console.log("Y is : " + cursorY);
+    // console.log("X is " + cursorX);
+    // console.log("Y is : " + cursorY);
     // if(cursorY < 60){
     //     stopDragLine();
     // }
@@ -154,7 +174,7 @@ function init() {
     // }
     canvas.addEventListener('mousedown', startDragLine, false);
     canvas.addEventListener('mouseup', stopDragLine, false);
-    // destroyCube();
+   
 }
 
 let num = Math.random() * 4;
@@ -212,7 +232,7 @@ function stopDragLine(){
         let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
         let rect = indi_cube.getBoundingClientRect();
 
-        console.log(rect.top);
+        // console.log(rect.top);
         var cx = rect.left + 32;
         var cy = rect.top + 32;
         var r = 80;
@@ -220,12 +240,15 @@ function stopDragLine(){
         //mx0-y0+c/rt(m^2+1)
         function lineCheck(x,y,r){
             let distance = (m*x-y+c)/Math.sqrt(m*m + 1);
-            console.log(`Distance is : ${distance}`);
-            console.log(`Radius is ${r}`);
+            // console.log(`Distance is : ${distance}`);
+            // console.log(`Radius is ${r}`);
             if(Math.abs(distance) < 1.2*r){
                 indi_cube.classList.add("cut");
                 score++;
                 let y = document.getElementsByClassName("final-score")[0];
+                y.ondragstart = function () {
+                    return false;
+                }
                 y.innerHTML = `Your score was ${score}`;
                 let x = document.getElementsByClassName("score")[0];
                 x.innerHTML = `Score : ${score}`;
@@ -253,7 +276,7 @@ function stopDragLine(){
 }
 
 function destroyCube(){
-    for(let i = 0; i < cube.length; i ++){
+    for(let i = 1; i < count; i ++){
     //    let x = document.getElementsByClassName(`cube-${i}`);
     //    try {
     //     console.log(x);
@@ -264,7 +287,17 @@ function destroyCube(){
     //    } catch (error) {
     //     console.log("That cube was dead");
     //    }
-       cube[i].remove();
+        // cube[i].addEventListener("animationend" , () => {
+        //     cube[i].remove();
+        //     console.log("Animation end for cube " + i);
+        // })
+        // console.log(cube);
+        let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
+        indi_cube.addEventListener("animationend" , () => {
+            indi_cube.style.display = "none";
+        })
+        // console.log(indi_cube);
+
     }
 }
 
