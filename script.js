@@ -1,6 +1,7 @@
 let start_button = document.getElementsByClassName("start-game")[0];
 let how_to_button = document.getElementsByClassName("how-to-play")[0];
 let end_button = document.getElementsByClassName("end-game")[0];
+var cut_count_check = 0;
 end_button.ondragstart = function (){
     return false;
 }
@@ -189,31 +190,33 @@ function gameEndCheck(){
 
 
 function init() {
-    // document.onmousemove = function(e){
-    //     cursorX = e.pageX;
-    //     cursorY = e.pageY;
-    // };
-    // // console.log("X is " + cursorX);
-    // // console.log("Y is : " + cursorY);
-    // // if(cursorY < 60){
-    // //     stopDragLine();
-    // // }
-    // // else if(cursorX > 800){
-    // //     stopDragLine();
-    // // }
+    document.onmousemove = function(e){
+        cursorX = e.pageX;
+        cursorY = e.pageY;
+    };
+    // console.log("X is " + cursorX);
+    // console.log("Y is : " + cursorY);
+    // if(cursorY < 60){
+    //     stopDragLine();
+    // }
+    // else if(cursorX > 800){
+    //     stopDragLine();
+    // }
     // canvas.addEventListener('mousedown', startDragLine, false);
     // canvas.addEventListener('mouseup', stopDragLine, false);
     let mouseX = 0;
     let mouseY = 0;
 let isMouseDown = false;
+ctx.clearRect(0, 0, canvas.width, canvas.height);
 canvas.addEventListener('mousedown', (event) => {
+    cut_count_check++;
   isMouseDown = true;
   mouseX = event.pageX - canvas.offsetLeft;
   mouseY = event.pageY - canvas.offsetTop;
   ctx.beginPath();
   ctx.moveTo(mouseX, mouseY); //go to initial
 });
-
+var pathPoints = [];
 canvas.addEventListener('mousemove', (event) => {
   if (isMouseDown) {
     //current pos
@@ -226,6 +229,7 @@ canvas.addEventListener('mousemove', (event) => {
     ctx.quadraticCurveTo(mouseX, mouseY, controlX, controlY);
     mouseX = currentX;
     mouseY = currentY;
+    pathPoints.push({ x: currentX, y: currentY });
     ctx.stroke();
 
     
@@ -233,12 +237,65 @@ canvas.addEventListener('mousemove', (event) => {
 
 });
 
+function calculateBoundingRect(points) {
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+  
+    points.forEach((point) => {
+      minX = Math.min(minX, point.x);
+      maxX = Math.max(maxX, point.x);
+      minY = Math.min(minY, point.y);
+      maxY = Math.max(maxY, point.y);
+    });
+  
+    return {
+      left: minX,
+      top: minY,
+      right: maxX,
+      bottom: maxY,
+    };
+  }
+
 canvas.addEventListener('mouseup', () => {
-    // betterCollisionCheck();
+    cut_count_check++;
+    
+    function checkCollision(rect1, rect2) {
+        console.log(rect1.left - rect2.right);
+        console.log(rect1.right - rect2.left);
+        console.log(rect1.top - rect2.bottom);
+        console.log(rect1.bottom - rect2.top);
+
+        return (
+          rect1.left < rect2.right &&
+          rect1.right > rect2.left &&
+          rect1.top < rect2.bottom &&
+          rect1.bottom > rect2.top
+        );
+      }
+    for(let i = 1; i < count; i ++){
+        let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
+        const pathRect = calculateBoundingRect(pathPoints);
+        if(checkCollision(indi_cube.getBoundingClientRect() , pathRect)){
+            indi_cube.classList.add("cut");
+        };
+    }
+    // if(cut_count_check == 2){
+    //     betterCollisionCheck();
+    // }
+    cut_count_check = 0;
   isMouseDown = false;
   ctx.clearRect(0, 0, canvas.width, canvas.height); // clear path
+  pathPoints.length = 0;
 });
 
+
+
+  
+  // ...
+  
+  
 
 }
 
@@ -454,6 +511,7 @@ start_game_again.addEventListener("click" , () => {
     catch(e){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         setTimeout(() => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             start_game();
         } , 10);
         
