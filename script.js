@@ -14,7 +14,7 @@ end_button.addEventListener("click" , () => {
 })
 
 var score = 0;
-
+var lives_number = 3;
 function start_game() {
     let hide_stuff = document.getElementsByClassName("bgs")[0];
     let game_area = document.getElementsByClassName("game-canvas")[0];
@@ -25,7 +25,7 @@ function start_game() {
         setInterval(() => {
             init();
             gameEndCheck();
-        } , 2000);
+        } , 1000);
 }
 
 function end_game() {
@@ -41,7 +41,6 @@ var count = 0;
 
 
 function createCube() {
-    var cube_circle = Math.random();
     count++;
     let x = document.createElement("div");
     let game_area = document.getElementsByClassName("game-canvas")[0];
@@ -58,7 +57,6 @@ function createCube() {
             x.style.backgroundColor = colors[2];
         }
     }
-    
     let position_left = Math.random() * 1000;
     x.style.setProperty("--my-start-left" , (position_left + "px"));
     x.style.setProperty("--my-middle-left" , (position_left + 200 + "px"));
@@ -74,12 +72,8 @@ function generateCubes(){
     } , 1000);        
 }
 
-
 getComputedStyle(document.documentElement)
     .getPropertyValue('--my-start-left'); 
-
-
-
 
 let game_area = document.getElementsByClassName("game-area")[0];
 let x_initial;
@@ -93,10 +87,6 @@ var ctx = canvas.getContext("2d");
 var firstClick = [0,0];
 var intervalLoop = null;
 
-
-
-
-
 for(let i = 0; i < cube.length; i ++){
     cube.ondragstart = function () {
         return false;
@@ -108,29 +98,33 @@ function gameEndCheck(){
         for(let i = 1; i < count; i ++){
             let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
             indi_cube.addEventListener("animationend" , () =>{
-                if(!indi_cube.classList.contains("cut")){
-                    game_end = 1;
-                    let gameEnd = document.getElementsByClassName("game-end")[0];
-                    gameEnd.removeAttribute("hidden");
-                    let x = document.getElementsByClassName('final-score')[0];
-                    x.innerHTML = `Your score was : ${score}`; 
-                    let gameArea = document.getElementsByClassName("game-canvas")[0];
-                    gameArea.setAttribute("hidden" , "hidden");
-                    try{
-                        clearInterval(cube_generate);
-                    }
-                    catch (error){
-                        console.log(error);
-                    }
+                if(!indi_cube.classList.contains("cut") && !indi_cube.classList.contains('liveadded')){
+                    lives_number -- ;
+                    indi_cube.classList.add('liveadded');
+                    let lives = document.getElementsByClassName("lives")[0];
+                    lives.innerHTML = `Lives Remaining : ${lives_number}`;
                 }
             })
         } 
+        if(lives_number <= 0){
+            game_end = 1;
+            let gameEnd = document.getElementsByClassName("game-end")[0];
+            gameEnd.removeAttribute("hidden");
+            let x = document.getElementsByClassName('final-score')[0];
+            x.innerHTML = `Your score was : ${score}`; 
+            let gameArea = document.getElementsByClassName("game-canvas")[0];
+            gameArea.setAttribute("hidden" , "hidden");
+            try{
+                clearInterval(cube_generate);
+            }
+            catch (error){
+                console.log(error);
+            }
+        }
     } catch (error) {
             console.log(error);
     }
 }
-
-
 
 function init() {
     document.onmousemove = function(e){
@@ -166,7 +160,9 @@ canvas.addEventListener('mousemove', (event) => {
     ctx.strokeStyle = "red";
     ctx.stroke();
     scoreUpdater();
+
   }
+
 });
 
 function calculateBoundingRect(points) {
@@ -206,8 +202,27 @@ canvas.addEventListener('mouseup', () => {
         const pathRect = calculateBoundingRect(pathPoints);
         if(checkCollision(indi_cube.getBoundingClientRect() , pathRect)){
             indi_cube.classList.add("cut");
-            indi_cube.style.backgroundColor = 'red';
         };
+        // let rect = indi_cube.getBoundingClientRect();
+        // let y = rect.top;
+        // let x = rect.left;
+          
+        // for(let i = 0; i < pathPoints.length; i++){
+        //     let item = pathPoints[i];
+        //     let x_check = x - item.x;
+        //     let y_check = y - item.y;
+        //     if(x_check < 0){
+        //         x_check = -1 * x_check;
+        //     }
+        //     if(y_check < 0){
+        //         y_check = -1 * y_check;
+        //     }
+        //     console.log("X check is" + x_check);
+        //     console.log("Y check is" + y_check);
+        //     if(x_check < 120 && y_check< 20){
+        //         indi_cube.classList.add('cut');
+        //     }
+        // }
     }
     cut_count_check = 0;
     isMouseDown = false;
@@ -220,7 +235,11 @@ var game_end = 0;
 
 function startDragLine(e) {
     firstClick = [e.pageX, e.pageY];
+    let audio = new Audio("./assets/sword.mp3");
+    audio.play();
     intervalLoop = setInterval(function(){
+        let audio = new Audio("./assets/sword.mp3");
+    audio.play();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
         ctx.moveTo(firstClick[0], firstClick[1]);
@@ -229,8 +248,7 @@ function startDragLine(e) {
         ctx.strokeStyle = '#000000';
         ctx.stroke();
     },10);
-    let audio = new Audio("./assets/sword.mp3");
-    audio.play();
+    
 }
 var count1 = 0;
 
@@ -309,21 +327,30 @@ function destoryCubeRemove(){
 let start_game_again = document.getElementsByClassName("start-game-again")[0];
 start_game_again.addEventListener("click" , () => {
     try{    
-        count = 0;
-        count1 = 0;
-        score = 0;
+        
         let score = document.getElementsByClassName('score')[0];
         score.innerHTML = `Score : 0`;
         destoryCubeRemove();
+        count = 0;
+        count1 = 0;
+        score = 0;
+        lives_number = 3;
+        let lives = document.getElementsByClassName('lives')[0];
+        lives.innerHTML = `Lives Remaining : ${lives_number}`;
         stopDragLine();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         start_game();
     }
     catch(e){
         score = 0;
+        lives_number = 3;
+        let lives = document.getElementsByClassName('lives')[0];
+        lives.innerHTML = `Lives Remaining : ${lives_number}`;
         let score_text = document.getElementsByClassName('score')[0];
         score_text.innerHTML = `Score : 0`;
         destoryCubeRemove();
+        count = 0;
+        count1 = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         setTimeout(() => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -332,7 +359,6 @@ start_game_again.addEventListener("click" , () => {
     }
 })
 // Write a better collision check for the ball and the cut.. the present one is not working perfectly every time
-
 function scoreUpdater(){
     for(let i = 1; i < count; i ++){
         let indi_cube = document.getElementsByClassName(`cube-${i}`)[0];
